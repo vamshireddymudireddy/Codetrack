@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CodeTrack</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container { margin-top: 50px; }
+        .btn { margin: 10px; }
+        .alert { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">CodeTrack</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="alert alert-success" id="successAlert" role="alert"></div>
+                <div class="alert alert-danger" id="errorAlert" role="alert"></div>
+                
+                <select id="classSelect" class="form-control">
+                    {% for class in classes %}
+                    <option value="{{ class }}">{{ class.replace('_', '-') }}</option>
+                    {% endfor %}
+                </select>
+                <div class="text-center">
+                    <button onclick="updateScores()" class="btn btn-primary">Update Scores</button>
+                    <button onclick="showScores()" class="btn btn-secondary">Show Scores</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(message, isError = false) {
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            
+            if (isError) {
+                errorAlert.textContent = message;
+                errorAlert.style.display = 'block';
+                successAlert.style.display = 'none';
+                setTimeout(() => errorAlert.style.display = 'none', 3000);
+            } else {
+                successAlert.textContent = message;
+                successAlert.style.display = 'block';
+                errorAlert.style.display = 'none';
+                setTimeout(() => successAlert.style.display = 'none', 3000);
+            }
+        }
+
+        function updateScores() {
+            const className = document.getElementById('classSelect').value;
+            fetch(`/update/${className}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert(data.error, true);
+                } else {
+                    showAlert(data.message);
+                }
+            })
+            .catch(error => {
+                showAlert('An error occurred while updating scores', true);
+                console.error('Error:', error);
+            });
+        }
+
+        function showScores() {
+            const className = document.getElementById('classSelect').value;
+            window.location.href = `/show/${className}`;
+        }
+    </script>
+</body>
+</html>

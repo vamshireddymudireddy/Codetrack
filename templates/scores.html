@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CodeTrack - {{ class_name }} Scores</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container { margin-top: 50px; }
+        table.data { 
+            width: 100%; 
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        table.data th, table.data td { 
+            padding: 12px 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        table.data th { 
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        table.data tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .positive-count { color: green; }
+        .negative-count { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">{{ class_name.replace('_', '-') }} - Student Scores</h1>
+        <div class="text-center mb-3">
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+        {% for table in tables %}
+            {{ table|safe }}
+        {% endfor %}
+    </div>
+    
+    <script>
+        // Add color coding to count values
+        document.addEventListener('DOMContentLoaded', function() {
+            const cells = document.querySelectorAll('td:last-child');
+            cells.forEach(cell => {
+                const value = parseInt(cell.textContent);
+                if (value > 0) {
+                    cell.classList.add('positive-count');
+                    cell.textContent = '+' + value;
+                } else if (value < 0) {
+                    cell.classList.add('negative-count');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
